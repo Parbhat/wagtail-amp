@@ -1,0 +1,26 @@
+{% extends 'base_amp.html' %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block page_meta %}
+    <link rel="canonical" href="{{ page.full_url }}"/>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    <p class="meta">{{ page.date }}</p>
+
+    <div class="intro">{{ page.intro }}</div>
+
+    <article>
+        {% for block in page.body %}
+            {% if block.block_type == 'heading' %}
+                <h2>{{ block.value }}</h2>
+            {% else %}
+                <section class="block-{{ block.block_type }}">
+                    {% include_block block %}
+                </section>
+            {% endif %}
+        {% endfor %}
+    </article>
+
+{% endblock %}

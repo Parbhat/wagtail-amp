@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-ampblogpage{% endblock %}
+
+{% block page_meta %}
+    <link rel="amphtml" href="{{ request.site.root_url }}/amp{{ page.url }}" />
+{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    <p class="meta">{{ page.date }}</p>
+
+    <div class="intro">{{ page.intro }}</div>
+
+    <article>
+        {% for block in page.body %}
+            {% if block.block_type == 'heading' %}
+                <h2>{{ block.value }}</h2>
+            {% else %}
+                <section class="block-{{ block.block_type }}">
+                    {% include_block block %}
+                </section>
+            {% endif %}
+        {% endfor %}
+    </article>
+
+    <p><a href="{{ page.get_parent.url }}">Return to blog</a></p>
+
+{% endblock %}

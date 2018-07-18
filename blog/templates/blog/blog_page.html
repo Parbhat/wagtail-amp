@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags %}
+
+{% block body_class %}template-blogpage{% endblock %}
+
+{% block page_meta %}
+    <link rel="amphtml" href="{{ request.site.root_url }}{% routablepageurl page "amp" %}" />
+{% endblock %}
+
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    <p class="meta">{{ page.date }}</p>
+
+    <div class="intro">{{ page.intro }}</div>
+
+    <article>
+        {% for block in page.body %}
+            {% if block.block_type == 'heading' %}
+                <h2>{{ block.value }}</h2>
+            {% else %}
+                <section class="block-{{ block.block_type }}">
+                    {% include_block block %}
+                </section>
+            {% endif %}
+        {% endfor %}
+    </article>
+
+    {% for item in page.gallery_images.all %}
+        <div>
+            {% image item.image fill-600x500 %}
+            <p>{{ item.caption }}</p>
+        </div>
+    {% endfor %}
+
+    <p><a href="{{ page.get_parent.url }}">Return to blog</a></p>
+
+{% endblock %}
