@@ -1,5 +1,6 @@
 from django.db import models
 from django.template.response import TemplateResponse
+from django.utils.safestring import mark_safe
 
 from modelcluster.fields import ParentalKey
 
@@ -7,6 +8,7 @@ from wagtail.core.models import Page, Orderable
 from wagtail.core.fields import RichTextField, StreamField
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.embeds.blocks import EmbedBlock
 from wagtail.admin.edit_handlers import (
     FieldPanel, InlinePanel, StreamFieldPanel
 )
@@ -14,6 +16,8 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.search import index
 
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
+
+from .utils import amplify_html
 
 
 class BlogIndexPage(Page):
@@ -47,6 +51,9 @@ class BlogPage(RoutablePageMixin, Page):
     @route(r'^amp/$')
     def amp(self, request):
         context = self.get_context(request)
+        body_html = self.body.__html__()
+        body_amp_html = amplify_html(body_html)
+        context['body_amp_html'] = mark_safe(body_amp_html)
         response = TemplateResponse(
             request, 'blog/blog_page_amp.html', context
         )
@@ -89,6 +96,7 @@ class AmpBlogPage(Page):
         ('heading', blocks.CharBlock(classname="full title")),
         ('paragraph', blocks.RichTextBlock()),
         ('image', ImageChooserBlock()),
+        ('embed', EmbedBlock()),
     ])
 
     def get_template_amp(self, request, *args, **kwargs):
@@ -99,6 +107,9 @@ class AmpBlogPage(Page):
         if is_amp_request:
             kwargs.pop('is_amp_request')
             context = self.get_context(request, *args, **kwargs)
+            body_html = self.body.__html__()
+            body_amp_html = amplify_html(body_html)
+            context['body_amp_html'] = mark_safe(body_amp_html)
 
             return TemplateResponse(
                 request,

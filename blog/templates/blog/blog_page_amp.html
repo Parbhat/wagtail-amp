@@ -12,20 +12,18 @@
     <div class="intro">{{ page.intro }}</div>
 
     <article>
-        {% for block in page.body %}
-            {% if block.block_type == 'heading' %}
-                <h2>{{ block.value }}</h2>
-            {% else %}
-                <section class="block-{{ block.block_type }}">
-                    {% include_block block %}
-                </section>
-            {% endif %}
-        {% endfor %}
+        {{ body_amp_html }}
     </article>
 
     {% for item in page.gallery_images.all %}
         <div>
-            {% image item.image fill-600x500 %}
+            {% image item.image fill-600x500 as gallery_image %}
+            <amp-img alt="{{ gallery_image.alt }}"
+              src="{{ gallery_image.url }}"
+              width="900"
+              height="675"
+              layout="responsive">
+            </amp-img>
             <p>{{ item.caption }}</p>
         </div>
     {% endfor %}
