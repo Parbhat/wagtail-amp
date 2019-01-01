@@ -20,8 +20,8 @@
             {% image item.image fill-600x500 as gallery_image %}
             <amp-img alt="{{ gallery_image.alt }}"
               src="{{ gallery_image.url }}"
-              width="900"
-              height="675"
+              width="{{ gallery_image.width }}"
+              height="{{ gallery_image.height }}"
               layout="responsive">
             </amp-img>
             <p>{{ item.caption }}</p>
